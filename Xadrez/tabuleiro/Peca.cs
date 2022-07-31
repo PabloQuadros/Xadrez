@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Xadrez.tabuleiro
 {
-    internal class Peca
+    abstract class Peca
     {
         public Posicao posicao { get; set; }
         public Cor cor { get; protected set; }
@@ -25,5 +25,8 @@ namespace Xadrez.tabuleiro
         {
             qtdMovimentos++;
         }
+
+        public abstract bool[,] movimentosPossiveis();
+        
     }
 }
