@@ -10,5 +10,10 @@ namespace Xadrez.xadrez
         public Rei(Tabuleiro tabuleiro,Cor cor) : base(tabuleiro,cor)
         {
         }
+
+        public override string ToString()
+        {
+            return "R";
+        }
     }
 }
