@@ -13,9 +13,9 @@ namespace Xadrez.tabuleiro
 
 
 
-        public Peca(Posicao posicao, Cor cor, Tabuleiro tabuleiro)
+        public Peca( Tabuleiro tabuleiro, Cor cor)
         {
-            this.posicao = posicao;
+            this.posicao = null;
             this.cor = cor;
             this.qtdMovimentos = 0;
             this.tabuleiro = tabuleiro;
