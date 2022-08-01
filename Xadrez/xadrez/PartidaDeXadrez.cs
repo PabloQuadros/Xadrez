@@ -11,6 +11,8 @@ namespace Xadrez.xadrez
         public int turno { get; private set; }
         public  Cor jogadorAtual { get; private set; }
         public bool terminada { get; private set; }
+        private HashSet<Peca> pecas;
+        private HashSet<Peca> capturadas;
 
          
         public PartidaDeXadrez()
@@ -20,14 +22,20 @@ namespace Xadrez.xadrez
             jogadorAtual = Cor.Branca;
             colocarPecas();
             terminada = false;
+            pecas = new HashSet<Peca>();
+            capturadas = new HashSet<Peca>();   
         }
 
         public void executaMovimento(Posicao origem, Posicao destino)
         {
             Peca p = tabuleiro.retirarPeca(origem);
             p.incrementarQtdMovimentos();
-            tabuleiro.retirarPeca(destino);
+           Peca pecaCapturada =  tabuleiro.retirarPeca(destino);
             tabuleiro.colocarPeca(p, destino);
+            if(pecaCapturada != null)
+            {
+                capturadas.Add(pecaCapturada);
+            }
         }
 
 
@@ -76,6 +84,38 @@ namespace Xadrez.xadrez
             }
         }
 
+        public HashSet<Peca> pecasCapturadas (Cor cor)
+        {
+            HashSet<Peca> aux = new HashSet<Peca>();
+            foreach(Peca x in capturadas)
+            {
+                if (x.cor == cor)
+                {
+                    aux.Add(x);
+                }
+            }
+            return aux;
+        }
+
+        public HashSet<Peca> pecasEmJogo(Cor cor)
+        {
+            HashSet<Peca> aux = new HashSet<Peca>();
+            foreach (Peca x in capturadas)
+            {
+                if (x.cor == cor)
+                {
+                    aux.Add(x);
+                }
+            }
+            aux.ExceptWith(pecasCapturadas(cor));
+            return aux;
+        }
+
+        public void colocarNovaPeca(char coluna, int linha,Peca peca)
+        {
+            tabuleiro.colocarPeca(peca, new PosicaoXadrez(coluna, linha).toPosicao());
+            pecas.Add(peca);
+        }
 
         private void colocarPecas()
         {
