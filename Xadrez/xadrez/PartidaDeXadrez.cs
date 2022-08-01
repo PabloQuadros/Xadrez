@@ -14,7 +14,7 @@ namespace Xadrez.xadrez
         private HashSet<Peca> pecas;
         private HashSet<Peca> capturadas;
         public bool xeque { get; private set; }
-        public Peca vulneravelEnPassant { get; private set; }
+        public Peca vulneravelEnPassant;
 
         public PartidaDeXadrez()
         {
@@ -33,13 +33,13 @@ namespace Xadrez.xadrez
         {
             Peca p = tabuleiro.retirarPeca(origem);
             p.incrementarQtdMovimentos();
-           Peca pecaCapturada =  tabuleiro.retirarPeca(destino);
+            Peca pecaCapturada =  tabuleiro.retirarPeca(destino);
             tabuleiro.colocarPeca(p, destino);
             if(pecaCapturada != null)
             {
                 capturadas.Add(pecaCapturada);
             }
-            return pecaCapturada;
+           
 
             // roque pequeno
             if(p is Rei && destino.coluna == origem.coluna+ 2)
@@ -59,7 +59,29 @@ namespace Xadrez.xadrez
                 T.incrementarQtdMovimentos();
                 tabuleiro.colocarPeca(T, destinoT);
             }
-        }
+
+            // #jogadaespecial en passant
+            if (p is Peao)
+            {
+                if (origem.coluna != destino.coluna && pecaCapturada == null)
+                {
+                    Posicao posP;
+                    if (p.cor == Cor.Branca)
+                    {
+                        posP = new Posicao(destino.linha + 1, destino.coluna);
+                    }
+                    else
+                    {
+                        posP = new Posicao(destino.linha - 1, destino.coluna);
+                    }
+                    pecaCapturada = tabuleiro.retirarPeca(posP);
+                    capturadas.Add(pecaCapturada);
+                }
+
+            }
+            return pecaCapturada;
+        
+    }
 
         public void desfazMovimento(Posicao origem,Posicao destino, Peca pecaCapturada)
         {
@@ -91,20 +113,39 @@ namespace Xadrez.xadrez
                 T.decrementarQtdMovimentos();
                 tabuleiro.colocarPeca(T, origemT);
             }
+
+            // #jogadaespecial en passant
+            if (p is Peao)
+            {
+                if (origem.coluna != destino.coluna && pecaCapturada == vulneravelEnPassant)
+                {
+                    Peca peao = tabuleiro.retirarPeca(destino);
+                    Posicao posP;
+                    if (p.cor == Cor.Branca)
+                    {
+                        posP = new Posicao(3, destino.coluna);
+                    }
+                    else
+                    {
+                        posP = new Posicao(4, destino.coluna);
+                    }
+                    tabuleiro.colocarPeca(peao, posP);
+                }
+            }
         }
 
 
         public void realizaJogada(Posicao origem, Posicao destino)
         {
-           
+
+            Peca p = tabuleiro.peca(destino);
             Peca pecaCapturada = executaMovimento(origem, destino);
             if (estaEmXeque(jogadorAtual))
             {
                 desfazMovimento(origem, destino, pecaCapturada);
                 throw new TabuleiroException("Você não pode se colocar em xeque!");
             }
-            turno++;
-            mudaJogador();
+          
 
             if (estaEmXeque(jogadorAtual))
             {
@@ -118,7 +159,23 @@ namespace Xadrez.xadrez
             {
                 terminada = true;
             }
-         
+            else
+            {
+                turno++;
+                mudaJogador();
+            }
+
+            
+            // jogada en passant
+            if (p is Peao && (destino.linha == origem.linha - 2 || destino.linha == origem.linha + 2))
+            {
+                vulneravelEnPassant = p;
+            }
+            else
+            {
+                vulneravelEnPassant = null;
+            }
+
         }
 
 
@@ -175,7 +232,7 @@ namespace Xadrez.xadrez
         public HashSet<Peca> pecasEmJogo(Cor cor)
         {
             HashSet<Peca> aux = new HashSet<Peca>();
-            foreach (Peca x in capturadas)
+            foreach (Peca x in pecas)
             {
                 if (x.cor == cor)
                 {
@@ -201,13 +258,12 @@ namespace Xadrez.xadrez
 
         private Peca rei(Cor cor)
         {
-            foreach(Peca x in pecasEmJogo(cor))
+            foreach (Peca x in pecasEmJogo(cor))
             {
-                if(x is Rei)
+                if (x is Rei)
                 {
                     return x;
                 }
-               
             }
             return null;
         }

@@ -18,6 +18,7 @@ namespace Xadrez
                         Console.Clear();
                         Tela.imprimirPartida(partida);
 
+                        Console.WriteLine();
                         Console.Write("Origem: ");
                         Posicao origem = Tela.lerPosicaoXadrez().toPosicao();
                         partida.validarPosicaoDeOrigem(origem);
@@ -27,6 +28,7 @@ namespace Xadrez
                         Console.Clear();
                         Tela.imprimirTabuleiro(partida.tabuleiro, posicoesPossiveis);
 
+                        Console.WriteLine();
                         Console.Write("Destino: ");
                         Posicao destino = Tela.lerPosicaoXadrez().toPosicao();
                         partida.validarPosicaoDeDestino(origem, destino);
@@ -36,7 +38,7 @@ namespace Xadrez
                     catch(TabuleiroException e)
                     {
                         Console.WriteLine(e.Message);
-                        Console.Read();
+                        Console.ReadLine();
                     }
                      
                 }

@@ -13,6 +13,11 @@ namespace Xadrez.xadrez
             this.partida = partida;
         }
 
+        public override string ToString()
+        {
+            return "R";
+        }
+
         private bool podeMover(Posicao pos)
         {
             Peca p = tabuleiro.peca(pos);
@@ -117,9 +122,6 @@ namespace Xadrez.xadrez
             return mat;
         }
 
-        public override string ToString()
-        {
-            return "R";
-        }
+     
     }
 }
