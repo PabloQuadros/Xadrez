@@ -22,6 +22,12 @@ namespace Xadrez
             {
                 Console.WriteLine("Xeque!");
             }
+            else
+            {
+                Console.WriteLine("XEQUEMATE!!!");
+                Console.WriteLine("O vencedor foi: " + partida.jogadorAtual);
+            }    
+            
         }
 
 
